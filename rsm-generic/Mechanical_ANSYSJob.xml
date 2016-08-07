@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<jobTemplate>
+  <script>GenericJobCode.xml</script>
+  <debug>FALSE</debug>
+  <cleanup>TRUE</cleanup>
+  <inputs>
+    <file type="ascii">commands.xml</file>
+    <file type="ascii">*.inp</file>
+  </inputs>
+  <outputs>
+    <file type="ascii" special="SolutionInformation">solve.out</file>
+    <file type="ascii" special="SolutionInformation">file.gst</file>
+    <file type="ascii" special="SolutionInformation">file.nlh</file>
+    <file type="ascii" special="SolutionInformation">file0.gst</file>
+    <file type="ascii" special="SolutionInformation">file0.nlh</file>
+    <file type="ascii" special="SolutionInformation">file.cnd</file> 
+    <file type="binary" special="SolutionInformation">*.png</file>
+    <file type="binary" special="PostDuringSolve">file.rcn</file>
+    <file type="binary" special="PostDuringSolve">file.redm</file>
+    <file type="binary" special="PostDuringSolve">file.rfl</file>
+    <file type="binary" special="PostDuringSolve">file.rfrq</file>
+    <file type="binary" special="PostDuringSolve">file.rmg</file>
+    <file type="binary" special="PostDuringSolve">file.rdsp</file>
+    <file type="binary" special="PostDuringSolve">file.rsx</file>
+    <file type="binary" special="PostDuringSolve">file.rst</file>
+    <file type="binary" special="PostDuringSolve">file.rth</file>
+    <file type="ascii" special="PostDuringSolve">solve.out</file>
+    <file type="ascii" special="PostDuringSolve">file.gst</file>
+    <file type="ascii" special="PostDuringSolve">file.nlh</file>
+    <file type="ascii" special="PostDuringSolve">file0.gst</file>
+    <file type="ascii" special="PostDuringSolve">file0.nlh</file>
+    <file type="ascii" special="PostDuringSolve">file.cnd</file>
+    <file type="ascii" special="cancel">file*.err</file>
+    <file type="ascii" special="cancel">solve.out</file>
+    <file type="ascii" special="cancel">secStart.log</file>
+    <file type="ascii" special="cancel">SecDebugLog.txt</file>
+    <file type="ascii" special="failure">SecDebugLog.txt</file>
+    <file type="ascii" special="failure">sec.solverexitcode</file>
+    <file type="ascii" special="failure">secStart.log</file>
+    <file type="ascii" special="failure">sec.failure</file>
+    <file type="ascii" special="failure">sec.envvarvalidation.executed</file>
+    <file type="ascii" special="normal">SecDebugLog.txt</file>
+    <file type="ascii" special="normal">secStart.log</file>
+    <file type="ascii" special="normal">sec.validation.executed</file>
+    <file type="ascii" special="normal">sec.envvarvalidation.executed</file>
+    <file type="ascii" special="normal">sec.failure</file>
+  </outputs>
+</jobTemplate>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jobCommands version="2" name="Custom Cluster Commands">
+  <cores>1</cores>
+  <environment>
+  </environment>
+  
+  <!-- delete the previous output files -->
+  <command name="delete the previous output files">
+    <application>
+      <app platform="win32|winx64">cmd.exe</app>
+    </application>
+    <arguments>
+      <arg platform="win32|winx64">
+        <value>/c del file*</value>
+      </arg>
+    </arguments>
+  </command>
+
+  <!-- execute ANSYS162 -->
+  <command name="execute ANSYS162">
+    <application>
+      <app platform="win32|winx64">"C:\Program Files\ANSYS Inc\v162\ansys\bin\winx64\ANSYS162.exe"</app>
+    </application>
+    <arguments>
+      <arg platform="win32|winx64">
+        <value>-b -i "pressure_vessel.inp" -o "solve.out"</value>
+      </arg>
+    </arguments>
+  </command>
+  
+  <!-- directory listing redirected to directory.out -->
+  <command name="directory listing redirected to directory.out">
+    <redirect append="false">directory.out</redirect>
+    <application>
+      <app platform="win32|winx64">cmd.exe</app>
+    </application>
+    <arguments>
+      <arg platform="win32|winx64">
+        <value>/c dir</value>
+      </arg>
+    </arguments>
+  </command>
+  </jobCommands>

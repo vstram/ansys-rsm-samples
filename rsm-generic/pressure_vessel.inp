@@ -1,0 +1,593 @@
+!*******************************************************************************
+!                       PRESSURE VESSEL APDL SCRIPT
+!
+! AUTHOR: roberto@esss.com.br
+! DATE: 2010-07-27
+! VERSION: 1.0
+! ANSYS MAPDL VERSION: 12.1
+!*******************************************************************************
+
+! FINISH
+/CLEAR,START
+/PREP7
+
+! **************************************** Deletes the previous generated images
+! /SYS,"del *.png"
+
+!************************************************************** White background
+
+/RGB,INDEX,100,100,100, 0   
+/RGB,INDEX, 80, 80, 80,13   
+/RGB,INDEX, 60, 60, 60,14
+/RGB,INDEX, 0, 0, 0,15
+
+
+!*************************************************************** Parametrization
+
+p = 15                      ! Internal Pressure (MPa)
+D = 929                     ! Shell Internal Diameter (mm)
+dt = 200                    ! Nozzle Internal Diameter (mm)
+E = 15                      ! Shell Width (mm)
+t = 10                      ! Nozzle Width (mm)
+Y = 100                     ! Nozzle Height (mm)
+MATTYPE = 1                 ! Material 1 = steel 2 = stainless steel 3 = aluminium
+
+
+L1 = 3*dt                   ! Shell length
+L2 = 15                     ! Reinforcement plate width
+L3 = 350                    ! Reinforcement plate diameter
+L4 = L2                     ! weld, shell - Reinforcement plate
+L5 = 15                     ! weld, nozzle - Reinforcement plate
+
+stressShell = (p*D/2)/(2*e)
+stressShell = (p*dt/2)/(2*t)
+
+RELEVANCE = 1               ! Mesh relevance (1 - 5, 1 less refined)
+
+!********************************************************************** GEOMETRY
+
+K,1,0,D/2,0
+K,2,0,D/2+E,0
+K,3,D/2,0,0
+K,4,D/2+E,0,0,
+K,5,0,0,0
+
+LARC,3,1,5,D/2 
+LARC,4,2,5,D/2+E 
+
+L,1,2
+L,3,4
+
+AL,1,2,3,4
+
+VOFFST,1,L1
+
+CIRCLE,5,dt/2,1
+CIRCLE,5,dt/2+t,1
+
+LDELE,14,16,1,1
+LDELE,18,20,1,1
+
+L,11,15
+L,10,14
+
+AL,14,17,15,13
+
+VOFFST,7,-(D/2+E+Y)
+
+VOVLAP,ALL
+
+VDELE,3,4,1,1
+
+CIRCLE,5,D/2+E+L2
+CIRCLE,5,D/2+E
+
+L,14,1
+L,2,15
+
+LDELE,13,15,1,1
+LDELE,10
+LDELE,2,3,1,1
+
+AL,1,17,11,21
+
+VOFFST,1,-L1
+
+CIRCLE,5,L3/2,15
+
+K,100,0,D/2+E+Y,0
+
+L,5,100
+
+ADRAG,24,,,,,,29  
+
+VSBA,all,10  
+
+VOVLAP,2,5
+
+VDELE,8,,,1
+
+VDELE,1,,,1
+
+CIRCLE,5,L3/2+L4,100
+
+ADRAG,1,,,,,,29  
+
+VSBA,4,1
+
+NUMMRG,ALL
+
+A,45,34,36
+
+A,44,37,35
+
+AL,54,11,37,1
+
+VA,15,4,1,23,24
+
+
+CIRCLE,5,dt/2+t+L5,100
+
+ADRAG,13,,,,,,29
+
+VSBA,9,25
+
+CIRCLE,5,D/2+E+L2+L5,,,,3
+
+K,200,0,0,-L1
+
+L,5,200
+
+ADRAG,13,,,,,,68 
+
+VSBA,7,18 
+
+V,48,43,57,49,42,56
+ 
+
+ACCAT,2,6           ! Merge the areas
+
+
+!************************************************************ Element Definition
+
+ET,1,SOLID186 
+
+ET,2,170
+ET,3,174
+
+KEYOPT,3,4,2
+KEYPOT,3,10,2
+
+!************************************************** Material Property definition
+
+*IF,MATTYPE,EQ,1,THEN
+
+  MP,EX,1,207000   
+  MP,PRXY,1,0.3  
+  
+*ELSEIF,MATTYPE,EQ,2,THEN
+
+  MP,EX,1,193000   
+  MP,PRXY,1,0.3
+
+*ELSE
+
+  MP,EX,1,71000
+  MP,PRXY,1,0.3
+
+*ENDIF
+
+!*************************************************************************  MESH
+
+ESIZE,20/RELEVANCE
+
+LSEL,A,LINE,,4
+LSEL,S,LINE,,6
+LSEL,A,LINE,,8
+LSEL,A,LINE,,16
+LSEL,A,LINE,,19
+LSEL,A,LINE,,22,23,1
+LSEL,A,LINE,,36
+LSEL,A,LINE,,38
+LSEL,A,LINE,,40,42,1
+LSEL,A,LINE,,46,48,1
+LSEL,A,LINE,,50
+LSEL,A,LINE,,58,59
+LSEL,A,LINE,,66,67
+LSEL,A,LINE,,77,79,1
+LSEL,A,LINE,,81
+LSEL,A,LINE,,84
+LSEL,A,LINE,,87,88,1
+LSEL,A,LINE,,90
+LSEL,A,LINE,,94
+LSEL,A,LINE,,98,99,1
+
+LESIZE,ALL,,,3
+
+ALLS
+
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,2   
+MSHKEY,0
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,1 
+MSHKEY,0
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,5 
+MSHKEY,0
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,8
+MSHKEY,0
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,10
+MSHKEY,0
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,11
+MSHKEY,0
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,9
+MSHKEY,0
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,6
+MSHKEY,0
+
+VSWEEP,7
+
+VSWEEP,4
+
+NUMMRG,ALL
+
+VDELE,3,,,1
+
+LARC,39,23,5,d/2,   
+
+LARC,36,25,5,d/2+e, 
+
+al,47,61,66,60
+
+
+LARC,38,22,5,d/2,   
+
+L,37,24 
+
+al,70,48,69,67
+
+al,70,44,61,57
+
+al,69,39,60,62
+
+FLST,2,6,5,ORDE,5   
+FITEM,2,16  
+FITEM,2,19  
+FITEM,2,-21 
+FITEM,2,30  
+FITEM,2,34  
+VA,P51X 
+
+
+MSHAPE,0,3d 
+MSHKEY,1
+VMESH,3
+MSHKEY,0
+
+allsel,all
+
+!**************************************** Contact: Reinforcement plate and Shell
+
+MP,MU,4,0.13
+MAT,4
+
+ !!! CONTACT !!!
+
+ASEL,S,,,20
+CM,_CONTACT,AREA
+R,2,,,0.01
+real,2
+TYPE,3
+NSLA,S,1
+ESLN,S,0
+ESURF
+ALLSEL
+
+
+!!! TARGET !!!
+
+ASEL,S,,,35,39,4
+CM,_TARGET,AREA
+TYPE,2
+real,2
+NSLA,S,1
+ESLN,S,0
+ESURF
+ALLSEL
+
+!**********************************************************  Boundary Conditions
+
+nsel,s,loc,z,-L1
+nplot
+sf,all,press,-stressShell
+CP,1,UZ,all
+allsel,all
+
+nsel,s,loc,y,D/2+E+Y
+nplot
+CP,2,Uy,all
+sf,all,press,-stressShell
+
+ALLSEL,ALL
+NSEL,S,LOC,X,0  
+D,ALL,UX,0 
+
+ALLSEL,ALL  
+NSEL,S,LOC,z,0  
+D,ALL,Uz,0 
+
+ALLSEL,ALL  
+NSEL,S,LOC,y,0  
+D,ALL,Uy,0 
+
+ALLSEL,ALL
+
+eplot
+
+/PSF,PRES,NORM,2,0,1
+
+csys,1
+
+nsel,s,loc,x,D/2
+
+sf,all,press,p
+
+allsel,all
+
+eplot
+
+wpro,,-90,   
+
+CSWPLA,42,1,1,1,
+
+nsel,s,loc,x,dt/2  
+
+sf,all,press,p 
+
+allsel,all
+
+csys,0
+
+
+!************************************************************ Linearization data
+ASEL,S,,,14
+CM,Sup_Ext,AREA
+ALLSEL,ALL
+
+
+ASEL,S,,,13
+CM,Sup_Int,AREA 
+allsel,all  
+
+
+
+!****************************************************** Nozzle local coordinates
+KWPAVE,100 
+CSWPLA,33,1,1,1,
+
+!********************************************************************** Solution
+
+/solu
+alls
+OUTRES,ALL,ALL
+solve
+
+!*************************************************************** Post-processing
+
+/post1
+
+
+!********************************************************** Post-processing Data
+
+/GFILE,800
+/PLOPTS,DATE,0
+/DSCALE,ALL,1.0
+/TRIAD,LBOT
+
+!********************************************************** Nozzle Radial Stress
+
+RSYS,33
+VSEL,S,VOLU,,6
+VSEL,A,VOLU,,9,11
+
+ESLV,S
+NSLE,S
+
+! ------------------------------------------------------- Visualization Commands
+
+/NOPR
+/RESET
+/DEVICE,VECT,OFF 
+! General Graphics Settings
+/PLOP,INFO, 3
+/TRIAD,LBOT
+/GTHIC,CURV,  2
+/GROPT,CGRI,ON
+/GROPT,CURL,  1
+/COL, PU  ,YGRE
+/COL, PROT,RED 
+/TRLCY,ON
+/TXTRE,ON
+/COL, PBAK,0, 1,  4
+! Window Settings
+/VIEW,1, 0.75000    , 0.50000    ,-0.43301    
+/FOC, 1,  64.005    ,  503.55    , -53.554    
+/DIST,1,  105.00
+/TYPE,1, 6
+/EDG, 1, 0,  45.000    
+/CONT,1,  9,AUTO
+/DSCA,1,  1.0000    
+/AUTO,1
+/GO  
+
+/SHOW,PNG
+PLNSOL,S,X
+/SHOW,CLOSE
+
+
+ALLS
+
+!*********************************************************** Shell Radial Stress
+
+VSEL,S,VOLU,,1,3
+
+ESLV,S
+NSLE,S
+
+! ------------------------------------------------------- Visualization Commands
+
+/NOPR
+/RESET
+/DEVICE,VECT,OFF 
+
+/PLOP,INFO, 3
+/TRIAD,LBOT
+/GTHIC,CURV,  2
+/GROPT,CGRI,ON
+/GROPT,CURL,  1
+/COL, PU  ,YGRE
+/COL, PROT,RED 
+/TRLCY,ON
+/TXTRE,ON
+/COL, PBAK,0, 1, 4
+
+!*************************************************************** Window Settings
+/VIEW,1, 0.43301    , 0.50000    , 0.75000    
+/FOC, 1, -24.059    ,  337.86    , -300.14    
+/FOC,1,,-0.6,,1
+/DIST,1,  133.50    
+/TYPE,1, 6
+/EDG, 1, 0,  45.000    
+/CONT,1,  9,AUTO
+/DSCA,1,  1.0000    
+/AUTO,1
+/GO  
+
+RSYS,1
+/SHOW,PNG
+PLNSOL,S,X
+/SHOW,CLOSE
+
+ALLS
+
+!************************************************************** Von Mises Stress
+
+! ------------------------------------------------------- Visualization Commands
+
+RSYS,0
+
+/NOPR
+/RESET
+/DEVICE,VECT,OFF 
+! General Graphics Settings
+/PLOP,INFO, 3
+/TRIAD,LBOT
+/GTHIC,CURV,  2
+/GROPT,CURL,  1
+/COL, PU  ,YGRE
+/COL, PROT,RED
+/TRLCY,ON
+/TXTRE,ON
+/COL, PBAK,0, 1,  4
+! Window Settings
+/VIEW,1,-0.43301    ,-0.50000    , 0.75000    
+/FOC, 1,  232.98    ,  620.05    , -343.80    
+/DIST,1,  210.53    
+/TYPE,1, 6
+/EDG, 1, 0,  45.000
+/CONT,1,  9,AUTO
+/DSCA,1,  1.0000    
+/AUTO,1
+/GO  
+
+/SHOW,PNG
+PLNSOL,S,EQV
+/SHOW,CLOSE
+
+!*************************************************************** Path Definition
+
+KSEL,S,KP,,45
+NSLK,R
+*GET,NODE_EXT,NODE,,NUM,MAX
+ALLS
+
+CSYS,1
+ 
+*GET,POSCIRC,NODE,NODE_EXT,LOC,Y
+
+NSEL,S,LOC,Z,0,0
+NSEL,R,LOC,X,D/2,D/2
+NSEL,R,LOC,Y,POSCIRC,POSCIRC
+*GET,NODE_INT,NODE,,NUM,MAX
+ALLS
+
+RSYS,1
+
+PATH,PATH,2,30,100, 
+PPATH,1,NODE_INT   
+PPATH,2,NODE_EXT
+
+/SHOW,PNG
+PLSECT,S,X
+/SHOW,CLOSE
+
+
+! ******************************************************* Rename the image files
+! /SYS,"rename pressure_vessel000.png nozzle.png"
+! /SYS,"rename pressure_vessel001.png shell.png"
+! /SYS,"rename pressure_vessel002.png vonmises.png"
+! /SYS,"rename pressure_vessel003.png linearized.png"
+
+! *************************************************** Critical Value Calculation
+
+RSYS,33
+
+VSEL,S,VOLU,,6
+VSEL,A,VOLU,,9,11
+ESLV,S
+NSLE,S
+
+NSORT,S,X,0
+*GET,MAX_RADBOC,SORT,,MAX
+
+ALLS
+VSEL,S,VOLU,,1,3
+ESLV,S
+NSLE,S
+
+RSYS,1
+NSORT,S,X,0
+*GET,MAX_RADCAS,SORT,,MAX
+
+ALLS
+RSYS,0
+NSORT,S,EQV
+*GET,MAX_VONM,SORT,,MAX
+
+!************************************************************* Saves the DB file
+SAVE
+
+!IMPORTANT: This assures that the Ansys will return EXIT_STATUS of the run as SUCCESS
+FINISH
